@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>web code python</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+      
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/4.1.0/superagent.min.js" integrity="sha512-LJaxxgpiq7SihGQ21nejROsll6FRrgbs0Wxtgqb5x+Q0CJICA3vt8hlBxSD8NLsO+Yabgg3B7ARexiijKiojGg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <div class="container">
+      <br><br><br>
+      <div class="card text-left">
+        <div class="card-body">
+          <h4 class="card-title">Web Python</h4>
+          <p class="card-text">
+            <ul>
+              <li>Web được code để phục vụ các bạn trong trường hợp không có máy tính để code hoặc có máy tính nhưng gặp vấn đề khi cài Python vào máy</li>
+              <li>Web được code khá vội nên sẽ thường xuyên bị sập, web sẽ tự động khởi động lại sau khi sập</li>
+              <li>Server của web đặt tại Singapore,, và đang chạy trên 1 VPS khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
+            </ul>
+          </p>
+        </div>
+      </div><br>
+      <div class="card text-left">
+        <div class="card-body">
+          <h4 class="card-title">Chố để code</h4>
+          <p class="card-text">
+            <ul>
+              <li>
+                <div class="form-group">
+                  <label for="">Chỗ này để code nè</label>
+                  <div id="editor" style="height:400px;border:1px solid black;">
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
+        
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label for="">Chỗ này để nhập input nè</label>
+                  <textarea class="form-control" name="" id="input" rows="3"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label for="">Còn chỗ này để bấm chạy nè </label>
+                  <a name="" id="run" class="btn btn-primary" href="#" role="button">Chạy</a>
+                </div>
+              </li>
+            </ul>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </body>
+  <script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' } });
+    window.MonacoEnvironment = { getWorkerUrl: () => proxy };
+    let proxy = URL.createObjectURL(new Blob([`
+    self.MonacoEnvironment = {
+        baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min'
+    };
+    importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+    require(["vs/editor/editor.main"], function () {
+      let editor = monaco.editor.create(document.getElementById('editor'), {
+        value: `#code tai day`,
+        language: 'python',
+        theme: 'vs'
+      });
+
+      let runn = document.getElementById("run")
+      runn.addEventListener("click", function (e) {
+        e.preventDefault()
+        let codecontent = editor.getValue()
+        let inputvalue = document.getElementById("input").value
+        if(!codecontent || codecontent == "#code tai day") return alert("Bạn chưa nhập nội dung code ") 
+        if (confirm("Bạn có chắc chắn muốn chạy code?")) {
+
+          //logic tien hanh gui code ve server
+          console.log(editor.getValue())
+          //api calling
+          superagent
+            .post('/api/coderun')
+            .send({
+              code:codecontent,
+              input:inputvalue
+            }) 
+            .end((err, res) => {
+              let rs = res.body
+              if(rs.err_value){
+                alert("========Kết quả========\nTrạng thái:"+rs.status+"\nKết quả:"+  rs.err_value +"\nID:"+rs.runID+"\nHãy kiểm tra lại cú pháp của bạn nha ^^")
+              }else{
+                alert("========Kết quả========\nTrạng thái:"+rs.status+"\nKết quả:"+  rs.return_value +"\nID:"+rs.runID)
+              }
+             
+
+            });
+
+        } else return
+
+      });
+    })
+
+
+  </script>
+  </html>
