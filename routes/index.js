@@ -66,6 +66,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
   // });
   console.log(await keyword_check(codeValue,require("../config.json").blocked))
   if(await keyword_check(codeValue,require("../config.json").blocked)) return res.json({ status: "Run Failure", runID: id, err_value: "\nSome Keyword are blocked due to security problem, check:\nhttps://code.namanhishere.com/blocked\n" })
+  if(await keyword_check(inputValue,require("../config.json").blocked)) return res.json({ status: "Run Failure", runID: id, err_value: "\nSome Keyword are blocked due to security problem, check:\nhttps://code.namanhishere.com/blocked\n" })
   let console_output = ""
   let compiler = child_process.spawn('python', ["./run/" + id + "/code.py"]);
   
