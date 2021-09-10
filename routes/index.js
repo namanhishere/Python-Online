@@ -6,15 +6,15 @@ const child_process = require("child_process")
 const rateLimit = require("express-rate-limit");
 
 const uiLimit = rateLimit({
-  windowMs: 10 * 60 * 1000, // 1 hour window
-  max: 50, // start blocking after 5 requests
+  windowMs: 10 * 60 * 1000, 
+  max: 50, 
   message:
     "IP của bạn đã bị khoá, vui lòng thử lại sau một khoảng thời gian nhất định"
 });
 
 const codeLimit = rateLimit({
-  windowMs: 10 * 60 * 1000, // 1 hour window
-  max: 1, // start blocking after 5 requests
+  windowMs: 10 * 60 * 1000, 
+  max: 100, 
   onLimitReached: function (req,res) {
     return res.json({ status: "IP của bạn đã bị khoá", runID: "None", return_value: "Vui lòng thử lại sau một khoảng thời gian nhất định" })
   }
