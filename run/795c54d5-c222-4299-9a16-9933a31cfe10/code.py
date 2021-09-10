@@ -1,2 +1,0 @@
-#code tai day
-r

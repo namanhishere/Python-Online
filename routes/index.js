@@ -3,15 +3,42 @@ var router = express.Router();
 const { v4 } = require('uuid');
 const fs = require("fs")
 const child_process = require("child_process")
+const rateLimit = require("express-rate-limit");
+
+const uiLimit = rateLimit({
+  windowMs: 10 * 60 * 1000, // 1 hour window
+  max: 50, // start blocking after 5 requests
+  message:
+    "IP của bạn đã bị khoá, vui lòng thử lại sau một khoảng thời gian nhất định"
+});
+
+const codeLimit = rateLimit({
+  windowMs: 10 * 60 * 1000, // 1 hour window
+  max: 1, // start blocking after 5 requests
+  onLimitReached: function (req,res) {
+    return res.json({ status: "IP của bạn đã bị khoá", runID: "None", return_value: "Vui lòng thử lại sau một khoảng thời gian nhất định" })
+  }
+});
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.get('/',uiLimit, function (req, res, next) {
   res.render('index');
 });
 
+router.get('/blocked', function (req, res, next) {
+  res.render('blocked',{blocked:require("../config.json").blocked});
+});
+
+async function keyword_check(key,list) {
+  var status = false
+  await list.forEach(element => {
+    if(key.includes(element)) return status = true 
+  });
+  return status
+}
 
 
-router.post('/api/coderun', function (req, res, next) {
+router.post('/api/coderun',codeLimit, async function (req, res, next) {
   let time_limit = 1
   console.log(req.body)
   let codeValue = req.body.code
@@ -20,6 +47,8 @@ router.post('/api/coderun', function (req, res, next) {
   if (!fs.existsSync("./run/")) {
 		fs.mkdirSync("./run/")
 	}
+
+
   fs.mkdirSync("./run/" + id + "/")
   //create running file
   fs.writeFile("./run/" + id + "/code.py", codeValue, function (err) {
@@ -28,9 +57,18 @@ router.post('/api/coderun', function (req, res, next) {
       return res.status(406).json({ error: "Cannot Create file to run", runningID: id, message: "Problem maybe from the permission missing, check the workspace is have RW permission" })
     }
   });
+  
+  //code restict
+  let compliner_status = "Running"
+  // await require("../config.json").blocked.forEach(element => {
+  //   // console.log(codeValue.includes(element))
+  //   if(codeValue.includes(element)){compliner_status == "Blocked"}
+  // });
+  console.log(await keyword_check(codeValue,require("../config.json").blocked))
+  if(await keyword_check(codeValue,require("../config.json").blocked)) return res.json({ status: "Run Failure", runID: id, err_value: "\nSome Keyword are blocked due to security problem, check:\nhttps://code.namanhishere.com/blocked\n" })
   let console_output = ""
   let compiler = child_process.spawn('python', ["./run/" + id + "/code.py"]);
-  let compliner_status = "Running"
+  
 
   let current_runtime = 0
   let run_intervial = setInterval(() => {

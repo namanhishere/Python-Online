@@ -1,0 +1,3 @@
+{
+    "blocked":["os.remove","os.rmdir","import socket","import requests","hostname","pip","www","https","http","routes","su","sudo","json","js","apt","<script>"]
+}

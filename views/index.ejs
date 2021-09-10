@@ -35,7 +35,7 @@
       </div><br>
       <div class="card text-left">
         <div class="card-body">
-          <h4 class="card-title">Chố để code</h4>
+          <h4 class="card-title">Chỗ để code</h4>
           <p class="card-text">
             <ul>
               <li>
@@ -100,6 +100,7 @@
             }) 
             .end((err, res) => {
               let rs = res.body
+              console.log(res)
               if(rs.err_value){
                 alert("========Kết quả========\nTrạng thái:"+rs.status+"\nKết quả:"+  rs.err_value +"\nID:"+rs.runID+"\nHãy kiểm tra lại cú pháp của bạn nha ^^")
               }else{
