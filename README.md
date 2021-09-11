@@ -8,7 +8,7 @@ Dự án được viết khá vội trong vòng 4 tiếng, xét thấy các bạ
 * Cài Nodejs ( đối với Linux thì nên cài bằng NVM), npm. Có thể cài thêm git để clone Repository
 * Clone repository từ Github về máy
 * Sử dụng lệnh ```npm install``` để cài thư viện về cho code
-* Sử dụng lệnh ```npm start  để khởi động chương trình
+* Sử dụng lệnh ```npm start```  để khởi động chương trình
 
 ## 3. Các vấn đề về bảo mật
 
