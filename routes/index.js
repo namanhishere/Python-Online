@@ -43,11 +43,14 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
   console.log(req.body)
   let codeValue = req.body.code
   let inputValue = req.body.input
+  let inputfrom = req.body.inputfrom
+  let outputfrom = req.body.outputfrom
   let id = v4()
   if (!fs.existsSync("./run/")) {
 		fs.mkdirSync("./run/")
 	}
 
+  console.log(inputfrom)
 
   fs.mkdirSync("./run/" + id + "/")
   //create running file
@@ -57,6 +60,14 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
       return res.status(406).json({ error: "Cannot Create file to run", runningID: id, message: "Problem maybe from the permission missing, check the workspace is have RW permission" })
     }
   });
+  if(inputfrom != "console"){
+    fs.writeFile("./run/" + id + "/"+inputfrom, inputValue , function (err) {
+      if (err) {
+        console.log(err);
+        return res.status(406).json({ error: "Cannot Create file to run", runningID: id, message: "Problem maybe from the permission missing, check the workspace is have RW permission" })
+      }
+    });
+  }
   
   //code restict
   let compliner_status = "Running"
@@ -77,7 +88,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
   }, 1);
 
   
-  if (inputValue != '') {
+  if (inputValue != '' && inputfrom == "console") {
     compiler.stdin.write(inputValue)
     compiler.stdin.end()
   }
@@ -99,7 +110,18 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
     switch (compliner_status) {
       case "Running":
         console.log("Time Pass, No Error")
+        if(outputfrom != "console"){
+          fs.readFile("./run/" + id + "/"+inputfrom, 'utf8' , (err, fdata) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+            res.json({ status: "Success", runID: id, return_value: console_output, files_value:fdata })
+          })
+        }else{
           res.json({ status: "Success", runID: id, return_value: console_output })
+        }
+          
         break;
 
       case "Time":

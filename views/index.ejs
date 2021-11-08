@@ -28,7 +28,8 @@
             <ul>
               <li>Web được code để phục vụ các bạn trong trường hợp không có máy tính để code hoặc có máy tính nhưng gặp vấn đề khi cài Python vào máy</li>
               <li>Web được code khá vội nên sẽ thường xuyên bị sập, web sẽ tự động khởi động lại sau khi sập</li>
-              <li>Server của web đặt tại Singapore,, và đang chạy trên 1 VPS khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
+              <li>Server của web đặt tại Mỹ nma là Mỹ tho và đang chạy trên 1 host khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
+              <li>Web có hỗ trợ đọc từ file, các ô nhập giá trị có thể bỏ trống nếu đọc dữ liệu từ bàn phím và màn hình hoặc bạn không biết nó dùng để làm gì </li>
             </ul>
           </p>
         </div>
@@ -41,16 +42,28 @@
               <li>
                 <div class="form-group">
                   <label for="">Chỗ này để code nè</label>
+                  <P></P>
                   <div id="editor" style="height:400px;border:1px solid black;">
                     <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/loader.min.js"></script>
         
                   </div>
                 </div>
+                <a name="" id="tab-button" class="btn btn-warning" href="#" role="button">Tab</a>
+                <!-- <a name="" id="copy-button" class="btn btn-danger" href="#" role="button">Copy</a>
+                <a name="" id="paste-button" class="btn btn-success" href="#" role="button">Paste</a> -->
               </li>
               <li>
                 <div class="form-group">
                   <label for="">Chỗ này để nhập input nè</label>
-                  <textarea class="form-control" name="" id="input" rows="3"></textarea>
+                  <input type="text" name="" id="input-from" class="form-control" placeholder="Nhập tên file cần đọc, để trống nếu bạn lấy giữ liệu từ bàn phím" aria-describedby="helpId">
+                  <br>
+                  <textarea class="form-control" name="" id="input" rows="3" placeholder="Nhập giá trị của input"></textarea>
+                </div>
+              </li>
+              <li>
+                <div class="form-group">
+                  <label for="">Chỗ này để nhập output nè</label>
+                  <input type="text" name="" id="output-from" class="form-control" placeholder="Nhập tên file cần đọc, để trống nếu bạn lấy giữ liệu từ màn hình" aria-describedby="helpId">
                 </div>
               </li>
               <li>
@@ -78,7 +91,8 @@
       let editor = monaco.editor.create(document.getElementById('editor'), {
         value: `#code tai day`,
         language: 'python',
-        theme: 'vs'
+        theme: 'vs',
+        automaticLayout: true
       });
 
       let runn = document.getElementById("run")
@@ -86,7 +100,10 @@
         e.preventDefault()
         let codecontent = editor.getValue()
         let inputvalue = document.getElementById("input").value
+        let inputfrom = document.getElementById("input-from").value || "console"
+        let outputfrom = document.getElementById("output-from").value || "console"
         if(!codecontent || codecontent == "#code tai day") return alert("Bạn chưa nhập nội dung code ") 
+        console.log(inputfrom)
         if (confirm("Bạn có chắc chắn muốn chạy code?")) {
 
           //logic tien hanh gui code ve server
@@ -96,7 +113,8 @@
             .post('/api/coderun')
             .send({
               code:codecontent,
-              input:inputvalue
+              input:inputvalue,
+              inputfrom,outputfrom
             }) 
             .end((err, res) => {
               let rs = res.body
@@ -113,6 +131,21 @@
         } else return
 
       });
+
+      document.getElementById("tab-button").addEventListener("click", function (e) {
+        e.preventDefault()
+        let old_code = editor.getValue()
+        editor.setValue(editor.getValue()+"    ")
+      });
+      // document.getElementById("copy-button").addEventListener("click", function (e) {
+      //   e.preventDefault()
+      //   navigator.clipboard.writeText(editor.getValue());
+      //   alert("Copy thành công");
+      // });
+      // document.getElementById("paste-button").addEventListener("click", function (e) {
+      //   e.preventDefault()
+      //   editor.setValue(navigator.clipboard.readText())
+      // });
     })
 
 
