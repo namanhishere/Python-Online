@@ -31,6 +31,7 @@
               <li>Web được code khá vội nên sẽ thường xuyên bị sập, web sẽ tự động khởi động lại sau khi sập</li>
               <li>Server của web đặt tại Mỹ nma là Mỹ tho và đang chạy trên 1 host khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
               <li>Web có hỗ trợ đọc từ file, các ô nhập giá trị có thể bỏ trống nếu đọc dữ liệu từ bàn phím và màn hình hoặc bạn không biết nó dùng để làm gì </li>
+              <li>Nếu bạn cảm thấy có gì đó sai sai trong cái web, hãy thử bấm vào nút màu đó ở đây ----> <a name="" id="" class="btn btn-danger" href="#" role="button" onclick="fixFunc()">Fix</a></li>
             </ul>
           </p>
         </div>
@@ -92,13 +93,13 @@
     </div>
   </body>
   <script>
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' } });
+    require.config({ baseUrl: 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/' });
     window.MonacoEnvironment = { getWorkerUrl: () => proxy };
     let proxy = URL.createObjectURL(new Blob([`
     self.MonacoEnvironment = {
-        baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min'
+        baseUrl: 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/'
     };
-    importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+    importScripts('https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
     require(["vs/editor/editor.main"], function () {
       let editor = monaco.editor.create(document.getElementById('editor'), {
         value: `#code tai day`,
@@ -176,6 +177,11 @@
           codeRunFunc()
         }
     })
+    function fixFunc() {
+      for (var it in $.cookie()) $.removeCookie(it);
+      window.localStorage.clear()
+      location.reload();
+    }
   })
 
 

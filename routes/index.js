@@ -105,7 +105,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
     let value = String(data)
     // console.log(value);
     console.log(value)
-    er_value +=value
+    er_value +=value+"\n"
     
   });
 
