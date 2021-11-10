@@ -165,11 +165,14 @@
 
 
 
-      $(document).keydown(function (event) {
-         if (event.ctrlKey && event.keyCode == 83) {
-          //Ctrl+S Function
-          codeRunFunc()
-        }
+      // $(document).keydown(function (event) {
+      //   event.preventDefault()
+      //    if (event.ctrlKey && event.keyCode == 83) {
+          
+      //     //Ctrl+S Function
+      //     codeRunFunc()
+      //   }
+        
     })
     function fixFunc() {
       for (var it in $.cookie()) $.removeCookie(it);
