@@ -93,13 +93,13 @@
     </div>
   </body>
   <script>
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs' } });
+    require.config({ paths: { 'vs': 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs' } });
     window.MonacoEnvironment = { getWorkerUrl: () => proxy };
     let proxy = URL.createObjectURL(new Blob([`
     self.MonacoEnvironment = {
-        baseUrl: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min'
+        baseUrl: 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/'
     };
-    importScripts('https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.20.0/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+    importScripts('https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
     require(["vs/editor/editor.main"], function () {
       let editor = monaco.editor.create(document.getElementById('editor'), {
         value: `#code tai day`,
