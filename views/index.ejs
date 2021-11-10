@@ -31,7 +31,7 @@
               <li>Web được code khá vội nên sẽ thường xuyên bị sập, web sẽ tự động khởi động lại sau khi sập</li>
               <li>Server của web đặt tại Mỹ nhưng mà là Mỹ tho và đang chạy trên 1 host khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
               <li>Web có hỗ trợ đọc từ file, các ô nhập giá trị có thể bỏ trống nếu đọc dữ liệu từ bàn phím và màn hình hoặc bạn không biết nó dùng để làm gì </li>
-              <li>Nếu bạn cảm thấy có gì đó sai sai trong cái web, hãy thử bấm vào nút màu đỏ ở đây ----> <a name="" id="" class="btn btn-danger" href="#" role="button" onclick="fixFunc()">Fix</a></li>
+              <li>Nếu bạn cảm thấy có gì đó sai sai trong cái web, hãy thử bấm vào nút màu đó ở đây ----> <a name="" id="" class="btn btn-danger" href="#" role="button" onclick="fixFunc()">Fix</a></li>
             </ul>
           </p>
         </div>
@@ -174,7 +174,7 @@
     function fixFunc() {
       for (var it in $.cookie()) $.removeCookie(it);
       window.localStorage.clear()
-      window.location.reload();
+      location.reload();
     }
   })
 
