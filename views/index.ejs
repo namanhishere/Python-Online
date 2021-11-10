@@ -35,6 +35,7 @@
           </p>
         </div>
       </div><br>
+
       <div class="card text-left">
         <div class="card-body">
           <h4 class="card-title">Chỗ để code</h4>
@@ -77,6 +78,16 @@
           </p>
         </div>
       </div>
+      <br>
+      <div class="card text-left" hidden id="Output-card">
+        <div class="card-body">
+          <h4 class="card-title">Output gần nhất</h4>
+          <p class="card-text">
+            <ul><strong>Trạng thái: </strong><p id="output-status"></p></ul>
+            <ul><strong>Output: </strong><p id="output-console"></p></ul>
+          </p>
+        </div>
+      </div>
 
     </div>
   </body>
@@ -96,9 +107,7 @@
         automaticLayout: true
       });
 
-      let runn = document.getElementById("run")
-      runn.addEventListener("click", function (e) {
-        e.preventDefault()
+      function codeRunFunc() {
         let codecontent = editor.getValue()
         let inputvalue = document.getElementById("input").value
         let inputfrom = document.getElementById("input-from").value || "console"
@@ -118,25 +127,35 @@
               inputfrom,outputfrom
             }) 
             .end((err, res) => {
+              document.getElementById("Output-card").removeAttribute("hidden"); 
               let rs = res.body
               console.log(res)
+              document.getElementById("output-status").innerHTML=rs.status
               if(rs.err_value){
+                document.getElementById("output-console").innerHTML= rs.err_value
                 alert("========Kết quả========\nTrạng thái:"+rs.status+"\nKết quả:"+  rs.err_value +"\nID:"+rs.runID+"\nHãy kiểm tra lại cú pháp của bạn nha ^^")
               }else{
+                document.getElementById("output-console").innerHTML= rs.return_value
                 alert("========Kết quả========\nTrạng thái:"+rs.status+"\nKết quả:"+  rs.return_value +"\nID:"+rs.runID)
               }
              
-
+             
             });
 
         } else return
+      }
+      let runn = document.getElementById("run")
+      runn.addEventListener("click", function (e) {
+        e.preventDefault()
+        codeRunFunc()
 
       });
 
       document.getElementById("tab-button").addEventListener("click", function (e) {
-        e.preventDefault()
+        
         let old_code = editor.getValue()
         editor.setValue(editor.getValue()+"    ")
+        e.preventDefault()
       });
       // document.getElementById("copy-button").addEventListener("click", function (e) {
       //   e.preventDefault()
@@ -147,7 +166,17 @@
       //   e.preventDefault()
       //   editor.setValue(navigator.clipboard.readText())
       // });
+
+
+
+      $(document).keydown(function (event) {
+        event.preventDefault()
+         if (event.ctrlKey && event.keyCode == 83) {
+          //Ctrl+S Function
+          codeRunFunc()
+        }
     })
+  })
 
 
   </script>

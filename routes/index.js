@@ -51,15 +51,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
 	}
 
   console.log(inputfrom)
-
   fs.mkdirSync("./run/" + id + "/")
-  //create running file
-  fs.writeFile("./run/" + id + "/code.py", codeValue, function (err) {
-    if (err) {
-      console.log(err);
-      return res.status(406).json({ error: "Cannot Create file to run", runningID: id, message: "Problem maybe from the permission missing, check the workspace is have RW permission" })
-    }
-  });
   if(inputfrom != "console"){
     fs.writeFile("./run/" + id + "/"+inputfrom, inputValue , function (err) {
       if (err) {
@@ -68,6 +60,15 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
       }
     });
   }
+  
+  //create running file
+  fs.writeFile("./run/" + id + "/code.py", codeValue, function (err) {
+    if (err) {
+      console.log(err);
+      return res.status(406).json({ error: "Cannot Create file to run", runningID: id, message: "Problem maybe from the permission missing, check the workspace is have RW permission" })
+    }
+  });
+
   
   //code restict
   let compliner_status = "Running"
@@ -79,7 +80,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
   if(await keyword_check(codeValue,require("../config.json").blocked)) return res.json({ status: "Run Failure", runID: id, err_value: "\nSome Keyword are blocked due to security problem, check:\nhttps://code.namanhishere.com/blocked\n" })
   if(await keyword_check(inputValue,require("../config.json").blocked)) return res.json({ status: "Run Failure", runID: id, err_value: "\nSome Keyword are blocked due to security problem, check:\nhttps://code.namanhishere.com/blocked\n" })
   let console_output = ""
-  let compiler = child_process.spawn('python', ["./run/" + id + "/code.py"]);
+  let compiler = await child_process.spawn('python', ["code.py"],{cwd:"./run/" + id });
   
 
   let current_runtime = 0
@@ -93,6 +94,7 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
     compiler.stdin.end()
   }
 
+  let er_value=""
   compiler.stdout.on('data', function (data) {
     console.log(data.toString())
     console_output += data.toString()
@@ -102,7 +104,9 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
     compliner_status = "Error"
     let value = String(data)
     // console.log(value);
-    res.status(200).json({ status: "Run Failure", runID: id, err_value: value })
+    console.log(value)
+    er_value +=value
+    
   });
 
   compiler.on('close', function (data) {
@@ -130,6 +134,8 @@ router.post('/api/coderun',codeLimit, async function (req, res, next) {
         break;
 
       case "Error":
+        res.status(200).json({ status: "Run Failure", runID: id, err_value: er_value })
+        break
 
       default:
         return
