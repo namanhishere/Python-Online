@@ -29,7 +29,7 @@
             <ul>
               <li>Web được code để phục vụ các bạn trong trường hợp không có máy tính để code hoặc có máy tính nhưng gặp vấn đề khi cài Python vào máy</li>
               <li>Web được code khá vội nên sẽ thường xuyên bị sập, web sẽ tự động khởi động lại sau khi sập</li>
-              <li>Server của web đặt tại Mỹ nma là Mỹ tho và đang chạy trên 1 host khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
+              <li>Server của web đặt tại Mỹ nhưng mà là Mỹ tho và đang chạy trên 1 host khá yếu, có thể sẽ mất nhiều thời gian để truy cập và chạy code </li>
               <li>Web có hỗ trợ đọc từ file, các ô nhập giá trị có thể bỏ trống nếu đọc dữ liệu từ bàn phím và màn hình hoặc bạn không biết nó dùng để làm gì </li>
               <li>Nếu bạn cảm thấy có gì đó sai sai trong cái web, hãy thử bấm vào nút màu đỏ ở đây ----> <a name="" id="" class="btn btn-danger" href="#" role="button" onclick="fixFunc()">Fix</a></li>
             </ul>
@@ -92,14 +92,9 @@
 
     </div>
   </body>
+  <script src="https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/loader.js"></script>
   <script>
-    require.config({ paths: { 'vs': 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs' } });
-    window.MonacoEnvironment = { getWorkerUrl: () => proxy };
-    let proxy = URL.createObjectURL(new Blob([`
-    self.MonacoEnvironment = {
-        baseUrl: 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/'
-    };
-    importScripts('https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs/base/worker/workerMain.min.js');`], { type: 'text/javascript' }));
+    require.config({ paths: { vs: 'https://microsoft.github.io/monaco-editor/node_modules/monaco-editor/min/vs' } });
     require(["vs/editor/editor.main"], function () {
       let editor = monaco.editor.create(document.getElementById('editor'), {
         value: `#code tai day`,
@@ -171,7 +166,6 @@
 
 
       $(document).keydown(function (event) {
-        event.preventDefault()
          if (event.ctrlKey && event.keyCode == 83) {
           //Ctrl+S Function
           codeRunFunc()
